@@ -1,10 +1,9 @@
 import  os
 
-from gitdb.fun import chunk_size
 from langchain_community.document_loaders import PyPDFLoader, TextLoader
 from langchain_core.documents import Document
 
-from LoggerHandler import  get_logger
+from utils.LoggerHandler import  get_logger
 import hashlib
 logger = get_logger()
 #文件转化为md5
@@ -23,18 +22,19 @@ def get_file_md5_hex(file_path):
         with open(file_path,"rb") as f:
             chunk = f.read(chunk_size)
             while chunk:
-                md5_obj.update(chunk),
-                md5_hex=md5_obj.hexdigest(),
-                return md5_hex
+                md5_obj.update(chunk)
+                chunk = f.read(chunk_size)
+            md5_hex = md5_obj.hexdigest()
+            return md5_hex
     except Exception as e:
         logger.error(f"获取文件md5失败,文件名{file_path}")
 
 #处理文件列表
 def dirlist(file_path,type:tuple[str]):
     files=[]
-    if not os.path.isdir():
+    if not os.path.isdir(file_path):
         return logger.warning("请传入一个文件夹")
-    for f in file_path:
+    for f in os.listdir(file_path):
         if f.endswith(type):
             files.append(os.path.join(file_path,f))
     return tuple(files)

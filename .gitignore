@@ -16,3 +16,7 @@ log/
 .env
 .venv/
 venv/
+
+# Runtime data
+md5.text
+rag/chroma_db/
