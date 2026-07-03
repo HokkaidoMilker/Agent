@@ -1,5 +1,18 @@
+import os
 import streamlit as st
-from agent.tools.react_agent import   ReactAgent
+
+# ============================================================
+# 将 Streamlit Cloud Secrets 注入到环境变量
+# dashscope / langchain 等库通过 os.environ 读取 API Key，
+# 而 Streamlit Cloud 的 secrets 只存在于 st.secrets，需要手动注入
+# ============================================================
+try:
+    for key, value in st.secrets.items():
+        os.environ[key] = str(value)
+except Exception:
+    pass  # 本地开发时 st.secrets 可能不存在
+
+from agent.tools.react_agent import ReactAgent
 
 # 标题
 st.title("智扫通机器人智能客服")
