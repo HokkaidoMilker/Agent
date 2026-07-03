@@ -1,6 +1,4 @@
 from langchain_chroma import Chroma
-
-
 from utils.config_handler import chroma_config
 from model.factory import embed_model
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -32,9 +30,9 @@ class VectorStoreService:
     def retriever(self):
         return self.vector_store.as_retriever(search_kwargs={"k":chroma_config["k"]})
 
-    # 从文件读取md5字符串存入向量库中
+    # 检查md5字符串去重
     def load_document(self):
-        #检查md5字符串去重
+
         def check_md5_hex(md5_for_check:str):
             if not os.path.exists(get_abs_path(chroma_config["md5_hex_store"])):
                 open(get_abs_path(chroma_config["md5_hex_store"]),"w",encoding="utf-8").close()
@@ -45,7 +43,7 @@ class VectorStoreService:
                     if line==md5_for_check:
                         return True
                 return False
-        #把md5字符串追加到文件中
+        #把md5字符串写入到文件中
         def save_md5_hex(md5_for_add:str):
             with open(get_abs_path(chroma_config["md5_hex_store"]),"a",encoding="utf-8") as f:
                 f.write(md5_for_add+"\n")

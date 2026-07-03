@@ -18,5 +18,8 @@ log/
 venv/
 
 # Runtime data
-md5.text
-rag/chroma_db/
+# md5.text - tracked for Chroma DB dedup
+# rag/chroma_db/ - tracked for Streamlit Cloud persistence
+# These are duplicate chroma_db copies, the real one is rag/chroma_db/
+/chroma_db/
+/agent/tools/chroma_db/

@@ -5,9 +5,11 @@ from datetime import datetime
 from utils.path_tool import get_abs_path
 
 #日志路径
-log_path=get_abs_path("log")
-#创建文件夹
-os.makedirs(log_path,exist_ok=True)
+try:
+    log_path = get_abs_path("log")
+    os.makedirs(log_path, exist_ok=True)
+except Exception:
+    log_path = None
 
 #日志的格式配置
 DEFAULT_LOG_FORMAT = logging.Formatter(
@@ -20,26 +22,30 @@ def get_logger(
         level=logging.INFO,
         log_file_name=None,
         file_level=logging.INFO,
-)->logging.Logger:
+) -> logging.Logger:
     logger = logging.getLogger(logger_name)
     logger.setLevel(level)
     #避免重复
     if logger.handlers:
         return logger
-    #控制台hander
+    #控制台handler
     console_handler = logging.StreamHandler()
     console_handler.setLevel(level)
     console_handler.setFormatter(DEFAULT_LOG_FORMAT)
 
     logger.addHandler(console_handler)
 
-    #文件handler
-    if not log_file_name:
-        log_file_name=  os.path.join(log_path,f"{logger_name}_{datetime.now().strftime('%y%m%d')}.log")
-    file_handler = logging.FileHandler(log_file_name,encoding="utf-8")
-    file_handler.setLevel(file_level)
-    file_handler.setFormatter(DEFAULT_LOG_FORMAT)
-    logger.addHandler(file_handler)
+    #文件handler - 仅在log_path可用时添加
+    if log_path:
+        try:
+            if not log_file_name:
+                log_file_name = os.path.join(log_path, f"{logger_name or 'app'}_{datetime.now().strftime('%y%m%d')}.log")
+            file_handler = logging.FileHandler(log_file_name, encoding="utf-8")
+            file_handler.setLevel(file_level)
+            file_handler.setFormatter(DEFAULT_LOG_FORMAT)
+            logger.addHandler(file_handler)
+        except Exception:
+            pass  # 文件日志不可用时仅使用控制台输出
 
     return logger
 

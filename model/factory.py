@@ -17,5 +17,5 @@ class EmbeddingsFactory(BaseModelFactory):
     def generator(self) ->[Embeddings|BaseChatModel]:
         return DashScopeEmbeddings(model=rag_config["embedding_model_name"])
 
-chat_model_factory = ChatModelFactory().generator()
+chat_model = ChatModelFactory().generator()
 embed_model = EmbeddingsFactory().generator()
