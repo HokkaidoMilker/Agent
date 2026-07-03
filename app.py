@@ -12,6 +12,30 @@ try:
 except Exception:
     pass  # 本地开发时 st.secrets 可能不存在
 
+# ============================================================
+# 登录认证
+# ============================================================
+APP_PASSWORD = os.environ.get("APP_PASSWORD", "")
+
+if "authenticated" not in st.session_state:
+    st.session_state["authenticated"] = False
+
+if not st.session_state["authenticated"]:
+    st.title("🔒 智扫通机器人智能客服")
+    st.divider()
+    password_input = st.text_input("请输入访问密码", type="password")
+
+    if password_input:
+        if password_input == APP_PASSWORD:
+            st.session_state["authenticated"] = True
+            st.rerun()
+        else:
+            st.error("密码错误，请重试")
+    st.stop()
+
+# ============================================================
+# 主应用
+# ============================================================
 from agent.tools.react_agent import ReactAgent
 
 # 标题
